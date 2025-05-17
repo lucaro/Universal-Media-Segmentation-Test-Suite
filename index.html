@@ -14,54 +14,58 @@
     <title>Universal Media Segmentation Test Suite</title>
     <script type="text/javascript">
 
-        function updateImageRow(rowId, baseUrl, suffix) {
+        function updateImageRow(rowId, baseUrl) {
             let row = document.getElementById(rowId);
-            row.children[2].children[0].src = baseUrl + suffix;
+            let segment = row.children[0].textContent.trim()
+            suffix = segment ? `/segment${segment}` : ''
+            row.children[2].children[0].src = baseUrl + segment;
             row.children[3].children[0].style.background = "url('" + row.children[1].children[0].src + "'), url('" + baseUrl + suffix + "')";
         }
 
-        function updateVideoRow(rowId, baseUrl, suffix) {
+        function updateVideoRow(rowId, baseUrl) {
             let row = document.getElementById(rowId);
+            let segment = row.children[0].textContent.trim()
             let video = row.children[2].children[0];
-            video.children[0].src = baseUrl + suffix;
+            video.children[0].src = baseUrl + (segment ? `/segment${segment}` : '');
             video.load();
         }
 
-        function updateAudioRow(rowId, baseUrl, suffix) {
+        function updateAudioRow(rowId, baseUrl) {
             let row = document.getElementById(rowId);
+            let segment = row.children[0].textContent.trim()
             let audio = row.children[2].children[0];
-            audio.children[0].src = baseUrl + suffix;
+            audio.children[0].src = baseUrl + (segment ? `/segment${segment}` : '');
             audio.load();
         }
 
         function updateImageTable(baseUrl) {
-            updateImageRow('image_base', baseUrl, '');
-            updateImageRow('rect_absolute', baseUrl, '/segment/rect/165,340,35,315');
-            updateImageRow('rect_relative', baseUrl, '/segment/rect/0.236,0.486,0.088,0.785');
-            updateImageRow('poly_absolute', baseUrl, '/segment/polygon/(170,35),(165,180),(225,320),(340,275),(335,65),(300,35)');
-            updateImageRow('poly_relative', baseUrl, '/segment/polygon/(0.243,0.088),(0.236,0.45),(0.321,0.8),(0.486,0.688),(0.479,0.163),(0.429,0.088)');
-            updateImageRow('bezier_absolute', baseUrl, '/segment/bezier/(190,30),(130,40),(150,300),(225,320),(400,360),(450,-20),(190,30)');
-            updateImageRow('bezier_relative', baseUrl, '/segment/bezier/(0.271,0.075),(0.186,0.1),(0.214,0.75),(0.321,0.8),(0.571,0.9),(0.643,-0.05),(0.271,0.075)');
-            updateImageRow('svg', baseUrl, '/segment/path/M 190,30 C 130,40 150,300 225,300 C 400,360 400,-20 190,30 M 410,60 L 470,130 L 480,70 Z');
-            updateImageRow('cut', baseUrl, '/segment/cut/y<-0.019x^2+9.6x-900');
-            updateImageRow('mask', baseUrl, '/segment/mask/iVBORw0KGgoAAAANSUhEUgAAArwAAAGQAQMAAAB28iHQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURQAAAP___6XZn90AAAAJcEhZcwAACxMAAAsTAQCanBgAAAOySURBVHja7d1BjpswGAVgPB6Nd_UFKvkovlnNzcqu18gRsmSB4kImEIitqlLfS2Hy3qZdfZqa5z-GlrRRFEVRFEVRFEVRFEVRFEVRFEVRFEVRlP-VHyw45RMLHlhw5sAx544Ch0xaC59Ja-EyaS0mmFI4M8JnBjz1rWfBnFqMRb5QYGrfWgZsDwcb1tZraHBiwZE0LKYic2DLmkKGBY9XjwRHFhxIA3msBenM4j7h73DYXie9wU9lc4UDYZtcP0IYp8OUP6cnHI7jeLOMg8tU5OkzdcDDwzQ88Wvh8mVaYvzAH5fBXWH0Iod8C3oYpRlGD6PZRdfCLDD4dGg_l8HC--avcDutNfasFebl9eAix7nCFgynZdMlLHzfzQEKm_tudkj31jbC0cJRdnMz15gAJxZMmT_NfO0IsGfBgQUnFpxJsGHBlgV7FhxYcGTBiXRWaVinq7kU8POgY8HLQRN9NE4sOLOWggUvpUDXzbPgpRTonRcXGDwrFhd8l3C_-wDfJbgVDL1L8CsYuvXCCobukLiCoUXOJHhdCugOsWsYWeR126BF3sLAIocNDCxy3MDAIqdM6lsmwWYL44pst_DAgnE7ZFtj4A55hGE7xLPg8AB3u4fjA3zaPZwe4DMLhu3p_CwYNSzMI4waFvYRRg0L9zwYNCx8AXc7h8PzYNCwiIeDUwGfdw4XLmq8lfCwb9iU8GXfcDmOQXPTVeBu17D_EjBkCoUKfGbB_WvCsQIPrwknwXQ4CxYsWLDg3cK9YDp8Phx8YsGQe5DagaVlwQi3dozFPK8IpFLU7vMwsGMtBQ2uPK_Y-aObWpF3Dld2SHs4uGPBmOe8lYuH2dP5iXAv-BhwZbph5iYNrj2YvhwOhgxkJ1jw38EtC-4EQ-EzC-4SCW5JZyzHOrx9NKSleG9IF6_6aQo5IFsW7A4H1_7StNk1HL4CjLmZjoLpcHoiPAh-dZj2OJYGexZc-czDPLqxgv8Ag_7hJg0ut153OLg9HIxxK604HHxhwaiXFeLT4J4Fo15hSSy4uHig4WZZcHkvjXpjypDgt2KRQcMtnFhwscYYt3J2Y8Go4ZZYcLESAwvu9w4X52PQcHsrhhBquPVzLX7dfkW9Z5rmIhss_BF-jn96P7XstrkbEOymLWHy7csPsS8UXqaN3d4G8wCEJ2vqArTG62-tTsC2XX_ibg2j2uZXP2ECLnHj2y0Me5P3W7OFYe8ev69-HzPpG4VpMO0rkB3rfxRQFEVRFEVRFOUf0zS_ARxLyKmUYYR5AAAAAElFTkSuQmCC');
-            updateImageRow('hilbert', baseUrl, '/segment/hilbert/3,4-11,24,28-31,55-56');
-            updateImageRow('color', baseUrl, '/segment/color/red,blue');
-            updateImageRow('rect_overlap', baseUrl, '/segment/rect/100,340,35,360/segment/rect/65,400,-25,280');
+            updateImageRow('image_base', baseUrl);
+            updateImageRow('rect_absolute', baseUrl);
+            updateImageRow('rect_relative', baseUrl);
+            updateImageRow('poly_absolute', baseUrl);
+            updateImageRow('poly_relative', baseUrl);
+            updateImageRow('bezier_absolute', baseUrl);
+            updateImageRow('bezier_relative', baseUrl);
+            updateImageRow('svg', baseUrl);
+            updateImageRow('cut', baseUrl);
+            updateImageRow('mask', baseUrl);
+            updateImageRow('hilbert', baseUrl);
+            updateImageRow('color', baseUrl);
+            updateImageRow('rect_overlap', baseUrl);
         }
 
         function updateVideoTable(baseUrl) {
-            updateVideoRow('video_base', baseUrl, '');
-            updateVideoRow('video_time_relative', baseUrl, '/segment/time/0.2-0.5');
-            updateVideoRow('video_time_absolute', baseUrl, '/segment/time/2000-5000');
-            updateVideoRow('video_rotoscope', baseUrl, '/segment/rotoscope/0,rect,0,200,0,200;3000,rect,300,600,100,400');
-            updateVideoRow('video_mesh', baseUrl, '/segment/mesh/v 0 0 0,v 0 100 0,v 100 0 0,v 100 100 0,v 150 100 2000,v 150 200 2000,v 300 100 2000,v 300 200 2000,f 1 5 6,f 1 5 7,f 1 6 2,f 1 7 3,f 2 6 8,f 2 8 4,f 3 1 2,f 3 2 4,f 5 7 8,f 5 8 6,f 7 3 4,f 7 4 8');
+            updateVideoRow('video_base', baseUrl);
+            updateVideoRow('video_time_relative', baseUrl);
+            updateVideoRow('video_time_absolute', baseUrl);
+            updateVideoRow('video_rotoscope', baseUrl);
+            updateVideoRow('video_mesh', baseUrl);
         }
 
         function updateAudioTable(baseUrl) {
-            updateAudioRow('audio_base', baseUrl, '');
-            updateAudioRow('audio_time', baseUrl, '/segment/time/0.2-0.5');
-            updateAudioRow('audio_frequency', baseUrl, '/segment/frequency/1000-4000');
+            updateAudioRow('audio_base', baseUrl);
+            updateAudioRow('audio_time', baseUrl);
+            updateAudioRow('audio_frequency', baseUrl);
         }
 
     </script>
@@ -126,7 +130,7 @@
         <!--rect absolute-->
         <tr id="rect_absolute">
             <td>
-                segment/rect/165,340,35,315
+              /rect/165,340,35,315
             </td>
             <td>
                 <img src="assets/image_rect_absolute.png">
@@ -144,7 +148,7 @@
         <!--rect relative-->
         <tr id="rect_relative">
             <td>
-                segment/rect/0.236,0.486,0.088,0.785
+              /rect/0.236,0.486,0.088,0.785
             </td>
             <td>
                 <img src="assets/image_rect_relative.png">
@@ -162,7 +166,7 @@
         <!--poly abolute-->
         <tr id="poly_absolute">
             <td>
-                segment/polygon/(170,35),(165,180),(225,320),(340,275),(335,65),(300,35)
+              /polygon/(170,35),(165,180),(225,320),(340,275),(335,65),(300,35)
             </td>
             <td>
                 <img src="assets/image_poly_absolute.png">
@@ -180,7 +184,7 @@
         <!--poly relative-->
         <tr id="poly_relative">
             <td>
-                segment/polygon/(0.243,0.088),(0.236,0.45),(0.321,0.8),(0.486,0.688),(0.479,0.163),(0.429,0.088)
+              /polygon/(0.243,0.088),(0.236,0.45),(0.321,0.8),(0.486,0.688),(0.479,0.163),(0.429,0.088)
             </td>
             <td>
                 <img src="assets/image_poly_relative.png">
@@ -198,7 +202,7 @@
         <!--bezier absolute-->
         <tr id="bezier_absolute">
             <td>
-                segment/bezier/(190,30),(130,40),(150,300),(225,320),(400,360),(450,-20),(190,30)
+              /bezier/(190,30),(130,40),(150,300),(225,320),(400,360),(450,-20),(190,30)
             </td>
             <td>
                 <img src="assets/image_bezier_absolute.png">
@@ -216,7 +220,7 @@
         <!--bezier relative-->
         <tr id="bezier_relative">
             <td>
-                segment/bezier/(0.271,0.075),(0.186,0.1),(0.214,0.75),(0.321,0.8),(0.571,0.9),(0.643,-0.05),(0.271,0.075)
+              /bezier/(0.271,0.075),(0.186,0.1),(0.214,0.75),(0.321,0.8),(0.571,0.9),(0.643,-0.05),(0.271,0.075)
             </td>
             <td>
                 <img src="assets/image_bezier_relative.png">
@@ -234,7 +238,7 @@
         <!--svg-->
         <tr id="svg">
             <td>
-                segment/path/M 190,30 C 130,40 150,300 225,300 C 400,360 400,-20 190,30 M 410,60 L 470,130 L 480,70 Z
+              /path/M 190,30 C 130,40 150,300 225,300 C 400,360 400,-20 190,30 M 410,60 L 470,130 L 480,70 Z
             </td>
             <td>
                 <img src="assets/image_svg.png">
@@ -252,7 +256,7 @@
         <!--cut-->
         <tr id="cut">
             <td>
-                segment/cut/y<-0.019x^2+9.6x-900
+              /cut/y<-0.019x^2+9.6x-900
             </td>
             <td>
                 <img src="assets/image_cut.png">
@@ -273,7 +277,7 @@
         <tr id="mask">
             <td>
                 <div style="max-width: 300px; overflow: scroll">
-                segment/mask/iVBORw0KGgoAAAANSUhEUgAAArwAAAGQAQMAAAB28iHQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURQAAAP___6XZn90AAAAJcEhZcwAACxMAAAsTAQCanBgAAAOySURBVHja7d1BjpswGAVgPB6Nd_UFKvkovlnNzcqu18gRsmSB4kImEIitqlLfS2Hy3qZdfZqa5z-GlrRRFEVRFEVRFEVRFEVRFEVRFEVRFEVRlP-VHyw45RMLHlhw5sAx544Ch0xaC59Ja-EyaS0mmFI4M8JnBjz1rWfBnFqMRb5QYGrfWgZsDwcb1tZraHBiwZE0LKYic2DLmkKGBY9XjwRHFhxIA3msBenM4j7h73DYXie9wU9lc4UDYZtcP0IYp8OUP6cnHI7jeLOMg8tU5OkzdcDDwzQ88Wvh8mVaYvzAH5fBXWH0Iod8C3oYpRlGD6PZRdfCLDD4dGg_l8HC--avcDutNfasFebl9eAix7nCFgynZdMlLHzfzQEKm_tudkj31jbC0cJRdnMz15gAJxZMmT_NfO0IsGfBgQUnFpxJsGHBlgV7FhxYcGTBiXRWaVinq7kU8POgY8HLQRN9NE4sOLOWggUvpUDXzbPgpRTonRcXGDwrFhd8l3C_-wDfJbgVDL1L8CsYuvXCCobukLiCoUXOJHhdCugOsWsYWeR126BF3sLAIocNDCxy3MDAIqdM6lsmwWYL44pst_DAgnE7ZFtj4A55hGE7xLPg8AB3u4fjA3zaPZwe4DMLhu3p_CwYNSzMI4waFvYRRg0L9zwYNCx8AXc7h8PzYNCwiIeDUwGfdw4XLmq8lfCwb9iU8GXfcDmOQXPTVeBu17D_EjBkCoUKfGbB_WvCsQIPrwknwXQ4CxYsWLDg3cK9YDp8Phx8YsGQe5DagaVlwQi3dozFPK8IpFLU7vMwsGMtBQ2uPK_Y-aObWpF3Dld2SHs4uGPBmOe8lYuH2dP5iXAv-BhwZbph5iYNrj2YvhwOhgxkJ1jw38EtC-4EQ-EzC-4SCW5JZyzHOrx9NKSleG9IF6_6aQo5IFsW7A4H1_7StNk1HL4CjLmZjoLpcHoiPAh-dZj2OJYGexZc-czDPLqxgv8Ag_7hJg0ut153OLg9HIxxK604HHxhwaiXFeLT4J4Fo15hSSy4uHig4WZZcHkvjXpjypDgt2KRQcMtnFhwscYYt3J2Y8Go4ZZYcLESAwvu9w4X52PQcHsrhhBquPVzLX7dfkW9Z5rmIhss_BF-jn96P7XstrkbEOymLWHy7csPsS8UXqaN3d4G8wCEJ2vqArTG62-tTsC2XX_ibg2j2uZXP2ECLnHj2y0Me5P3W7O FYe8ev69-HzPpG4VpMO0rkB3rfxRQFEVRFEVRFOUf0zS_ARxLyKmUYYR5AAAAAElFTkSuQmCC
+              /mask/iVBORw0KGgoAAAANSUhEUgAAArwAAAGQAQMAAAB28iHQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURQAAAP___6XZn90AAAAJcEhZcwAACxMAAAsTAQCanBgAAAOySURBVHja7d1BjpswGAVgPB6Nd_UFKvkovlnNzcqu18gRsmSB4kImEIitqlLfS2Hy3qZdfZqa5z-GlrRRFEVRFEVRFEVRFEVRFEVRFEVRFEVRlP-VHyw45RMLHlhw5sAx544Ch0xaC59Ja-EyaS0mmFI4M8JnBjz1rWfBnFqMRb5QYGrfWgZsDwcb1tZraHBiwZE0LKYic2DLmkKGBY9XjwRHFhxIA3msBenM4j7h73DYXie9wU9lc4UDYZtcP0IYp8OUP6cnHI7jeLOMg8tU5OkzdcDDwzQ88Wvh8mVaYvzAH5fBXWH0Iod8C3oYpRlGD6PZRdfCLDD4dGg_l8HC--avcDutNfasFebl9eAix7nCFgynZdMlLHzfzQEKm_tudkj31jbC0cJRdnMz15gAJxZMmT_NfO0IsGfBgQUnFpxJsGHBlgV7FhxYcGTBiXRWaVinq7kU8POgY8HLQRN9NE4sOLOWggUvpUDXzbPgpRTonRcXGDwrFhd8l3C_-wDfJbgVDL1L8CsYuvXCCobukLiCoUXOJHhdCugOsWsYWeR126BF3sLAIocNDCxy3MDAIqdM6lsmwWYL44pst_DAgnE7ZFtj4A55hGE7xLPg8AB3u4fjA3zaPZwe4DMLhu3p_CwYNSzMI4waFvYRRg0L9zwYNCx8AXc7h8PzYNCwiIeDUwGfdw4XLmq8lfCwb9iU8GXfcDmOQXPTVeBu17D_EjBkCoUKfGbB_WvCsQIPrwknwXQ4CxYsWLDg3cK9YDp8Phx8YsGQe5DagaVlwQi3dozFPK8IpFLU7vMwsGMtBQ2uPK_Y-aObWpF3Dld2SHs4uGPBmOe8lYuH2dP5iXAv-BhwZbph5iYNrj2YvhwOhgxkJ1jw38EtC-4EQ-EzC-4SCW5JZyzHOrx9NKSleG9IF6_6aQo5IFsW7A4H1_7StNk1HL4CjLmZjoLpcHoiPAh-dZj2OJYGexZc-czDPLqxgv8Ag_7hJg0ut153OLg9HIxxK604HHxhwaiXFeLT4J4Fo15hSSy4uHig4WZZcHkvjXpjypDgt2KRQcMtnFhwscYYt3J2Y8Go4ZZYcLESAwvu9w4X52PQcHsrhhBquPVzLX7dfkW9Z5rmIhss_BF-jn96P7XstrkbEOymLWHy7csPsS8UXqaN3d4G8wCEJ2vqArTG62-tTsC2XX_ibg2j2uZXP2ECLnHj2y0Me5P3W7O FYe8ev69-HzPpG4VpMO0rkB3rfxRQFEVRFEVRFOUf0zS_ARxLyKmUYYR5AAAAAElFTkSuQmCC
                 </div>
             </td>
             <td>
@@ -292,7 +296,7 @@
         <!--    hilbert-->
         <tr id="hilbert">
             <td>
-                segment/hilbert/3,4-11,24,28-31,55-56
+              /hilbert/3,4-11,24,28-31,55-56
             </td>
             <td>
                 <img src="assets/image_hilbert.png">
@@ -310,7 +314,7 @@
         <!--    color-->
         <tr id="color">
             <td>
-                segment/color/red,blue
+              /color/red,blue
             </td>
             <td>
                 <img src="assets/image_color.png">
@@ -328,7 +332,7 @@
 
         <tr id="rect_overlap">
             <td>
-                segment/rect/100,340,35,360/segment/rect/65,400,-25,280
+              /rect/100,340,35,360/segment/rect/65,400,-25,280
             </td>
             <td>
                 <img src="assets/image_rect_overlap.png">
@@ -372,7 +376,7 @@
 
         <tr id="video_time_relative">
             <td>
-                /segment/time/0.2-0.5
+              /time/0.2-0.5
             </td>
             <td>
                 <video controls>
@@ -388,7 +392,7 @@
 
         <tr id="video_time_absolute">
             <td>
-                /segment/time/2000-5000
+              /time/2000-5000
             </td>
             <td>
                 <video controls>
@@ -404,7 +408,7 @@
 
         <tr id="video_rotoscope">
             <td>
-                /segment/rotoscope/0,rect,0,200,0,200;3000,rect,300,600,100,400
+              /rotoscope/0,rect,0,200,0,200;3000,rect,300,600,100,400
             </td>
             <td>
                 <video controls>
@@ -421,7 +425,7 @@
         <tr id="video_mesh">
             <td>
                 <div style="max-width: 100%; overflow: scroll">
-                /segment/mesh/v 0 0 0,v 0 100 0,v 100 0 0,v 100 100 0,v 150 100 2000,v 150 200 2000,v 300 100 2000,v 300 200 2000,f 1 5 6,f 1 5 7,f 1 6 2,f 1 7 3,f 2 6 8,f 2 8 4,f 3 1 2,f 3 2 4,f 5 7 8,f 5 8 6,f 7 3 4,f 7 4 8
+              /mesh/v 0 0 0,v 0 100 0,v 100 0 0,v 100 100 0,v 150 100 2000,v 150 200 2000,v 300 100 2000,v 300 200 2000,f 1 5 6,f 1 5 7,f 1 6 2,f 1 7 3,f 2 6 8,f 2 8 4,f 3 1 2,f 3 2 4,f 5 7 8,f 5 8 6,f 7 3 4,f 7 4 8
                 </div>
             </td>
             <td>
@@ -464,7 +468,7 @@
 
         <tr id="audio_time">
             <td>
-                /segment/time/0.2-0.5
+              /time/0.2-0.5
             </td>
             <td>
                 <audio controls>
@@ -480,7 +484,7 @@
 
         <tr id="audio_frequency">
             <td>
-                /segment/frequency/1000-4000
+              /frequency/1000-4000
             </td>
             <td>
                 <audio controls>
